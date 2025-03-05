@@ -1,50 +1,31 @@
-using System.Collections.Generic;
-using AlianInvasion.Core.DestroyableObject.Building;
-using AlianInvasion.Core.Destruction;
-using Unity.VisualScripting;
+using AlienInvasion.Core.DestroyableObject.Building;
 using UnityEngine;
-using AlianInvasion.Core.Services.AssetLoader;
+using Zenject;
+using AlienInvasion.Core.Services.AssetLoader;
 
-namespace AlianInvasion.Core.Services.Factories
+namespace AlienInvasion.Core.Services.Factories
 {
-    public class BuildingFactoryService : IBuildingFactoryService
+    public class BuildingFactoryService : IFactoryService<Building, BuildingAssetType>
     {
-        private readonly AssetLoaderService _assetLoader;
+        private readonly BuildingAssetLoader _assetLoader;
+        private readonly DiContainer _container;
 
-        private FragmentParameters _fragmentParameters;
         private Building _prefab;
 
-        public BuildingFactoryService(AssetLoaderService assetLoader)
+        public BuildingFactoryService(DiContainer container, BuildingAssetLoader assetLoader)
         {
+            _container = container;
             _assetLoader = assetLoader;
         }
 
-        public Building Create(Vector3 position, Quaternion quaternion)
+        public Building Create(Vector3 position, Quaternion rotation, Transform parent)
         {
-            var building = Object.Instantiate(_prefab, position, quaternion);
-
-            var fragments = new Dictionary<int, IFragment>();
-            int currentFragmentIndex = 0;
-
-            foreach (Transform child in building.transform)
-            {
-                var fragment = child.AddComponent<FragmentPresenter>();
-                var fragmentModel = new FragmentModel(_fragmentParameters);
-
-                fragment.Initiaze(fragmentModel, currentFragmentIndex);
-                fragments.Add(currentFragmentIndex, fragment);
-                currentFragmentIndex++;
-            }
-
-            var buidldingModel = new BuildingModel(fragments);
-            building.Initialize(buidldingModel);
-
-            return building;
+            return _container.InstantiatePrefabForComponent<Building>(_prefab, position, rotation, parent);
         }
 
-        public void LoadData()
+        public void LoadData(BuildingAssetType assetType)
         {
-            _prefab = _assetLoader.LoadDestroyableObject<Building>();
+            _prefab = _assetLoader.Load(assetType);
         }
     }
 }

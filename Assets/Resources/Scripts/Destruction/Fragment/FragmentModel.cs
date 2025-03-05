@@ -1,6 +1,7 @@
+using AlienInvasion.Core.Destruction.Fragment;
 using UnityEngine;
 
-namespace AlianInvasion.Core.Destruction
+namespace AlienInvasion.Core.Destruction
 {
     public class FragmentModel : IFragmentModel
     {
@@ -19,31 +20,17 @@ namespace AlianInvasion.Core.Destruction
             _isDetached = false;
         }
 
-        public void SetGravityState(bool value)
+        public void InitializeRigidbody(Rigidbody rigidbody)
         {
-            _rigidbody.useGravity = value;
-        }
+            _rigidbody = rigidbody;
+            _rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            _rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
 
-        public bool TryActivateRigidbody(GameObject gameObject)
-        {
-            if (_rigidbody == null)
-            {
-                _rigidbody = gameObject.AddComponent<Rigidbody>();
-                _rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
-                _rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+            var sizeMagnitude = _rigidbody.GetComponent<Collider>().bounds.size.magnitude;
+            _mass = Mathf.Clamp(sizeMagnitude, _parameters.MinMass, _parameters.MaxMass);
 
-                var calcMass = _rigidbody.GetComponent<Collider>().bounds.size.magnitude;
-                _mass = Mathf.Clamp(calcMass, _parameters.MinMass, _parameters.MaxMass);
-                _rigidbody.mass = _mass;
-
-                _isDetached = true;
-
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            _rigidbody.mass = _mass;
+            _rigidbody.constraints = RigidbodyConstraints.FreezeAll;
         }
 
         public void AddExplosionForce(Vector3 explosivePosition)
@@ -51,11 +38,35 @@ namespace AlianInvasion.Core.Destruction
             if (_isDetached)
             {
                 _rigidbody.AddExplosionForce(_parameters.ExplosiveForce
-                ,explosivePosition
-                ,_parameters.ExplosiveRadius
-                ,_parameters.UpwardModifier
-                ,_parameters.ForceMode);
+                , explosivePosition
+                , _parameters.ExplosiveRadius
+                , _parameters.UpwardModifier
+                , _parameters.ForceMode);
             }
+        }
+
+        public void SetState(FragmentState state, Transform transform)
+        {
+            Deactivate();
+
+            transform.localPosition = state.LocalPosition;
+            transform.localRotation = state.LocalRotation;
+
+            _isDetached = false;
+        }
+
+        public void Activate()
+        {
+            _rigidbody.useGravity = true;
+            _rigidbody.constraints = RigidbodyConstraints.None;
+            
+            _isDetached = true;
+        }
+
+        private void Deactivate()
+        {
+            _rigidbody.useGravity = false;
+            _rigidbody.constraints = RigidbodyConstraints.FreezeAll;
         }
     }
 }

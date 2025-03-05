@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AlianInvasion.Core
+namespace AlienInvasion.Core
 {
     public interface ICameraWrapper
     {

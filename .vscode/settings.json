@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "AlianInvasion.sln"
+    "dotnet.defaultSolution": "AlienInvasion.sln"
 }

@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using AlianInvasion.Core.Destruction;
-using UnityEngine;
+using AlienInvasion.Core.Destruction;
 
-namespace AlianInvasion.Core.DestroyableObject
+namespace AlienInvasion.Core.DestroyableObject
 {
     public abstract class DestroyableObjectModel
     {

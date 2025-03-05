@@ -1,4 +1,4 @@
-namespace AlianInvasion.Core.Services.Lifecycle
+namespace AlienInvasion.Core.Services.Lifecycle
 {
     public interface ILifecycleProviderService
     {

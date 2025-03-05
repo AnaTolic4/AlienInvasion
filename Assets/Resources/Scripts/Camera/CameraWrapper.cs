@@ -1,8 +1,8 @@
-using AlianInvasion.Core.Services.AssetLoader;
-using AlianInvasion.Core.Services.Lifecycle;
+using AlienInvasion.Core.Services.Lifecycle;
+using AlienInvasion.Core.Services.SettingsLoader;
 using UnityEngine;
 
-namespace AlianInvasion.Core
+namespace AlienInvasion.Core
 {
     public class CameraWrapper : ICameraWrapper, IUpdatable
     {
@@ -20,12 +20,11 @@ namespace AlianInvasion.Core
         {
             _camera = camera;
             _settingsLoader = settingsLoaderService;
-
         }
 
         public void InitializeCamera()
         {
-            _settings = _settingsLoader.LoadSettings<CameraSettings>();
+            _settings = _settingsLoader.Load<CameraSettings>();
 
             _targetAspect = Screen.width / Screen.height;
             _initialVerticalFov = _camera.fieldOfView;

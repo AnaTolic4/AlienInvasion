@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AlianInvasion.Core.Services.Lifecycle
+namespace AlienInvasion.Core.Services.Lifecycle
 {
     public class LifecycleProviderService : MonoBehaviour, ILifecycleProviderService
     {
